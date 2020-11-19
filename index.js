@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const formidableMiddleware = require("express-formidable");
 const cors = require("cors");
 const helmet = require("helmet");
-require("dotenv").config;
-
+require("dotenv").config();
 const app = express();
 app.use(helmet());
 app.use(cors());
@@ -19,10 +18,10 @@ mongoose.connect("mongodb://localhost:27017/Marvel-api", {
     useFindAndModify: false,
 });
 const charactersRoutes = require("./routes/characters");
-// const userRoutes = require("./routes/user");
+const userRoutes = require("./routes/user");
 // const searchRoutes = require("./routes/search");
 app.use(charactersRoutes);
-// app.use(userRoutes);
+app.use(userRoutes);
 // app.use(searchRoutes);
 
 
@@ -31,5 +30,5 @@ app.all("*", (req, res) => {
 });
 
 app.listen(process.env.PORT || 3001, () => {
-    console.log("Server has started");
+    console.log(`Server has started at ${process.env.PORT}`);
 });
