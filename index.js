@@ -11,7 +11,7 @@ app.use(formidableMiddleware({
     multiples: true,
 }));
 
-mongoose.connect("mongodb://localhost:27017/Marvel-api", {
+mongoose.connect(process.env.MONGODB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -19,10 +19,8 @@ mongoose.connect("mongodb://localhost:27017/Marvel-api", {
 });
 const charactersRoutes = require("./routes/characters");
 const userRoutes = require("./routes/user");
-// const searchRoutes = require("./routes/search");
 app.use(charactersRoutes);
 app.use(userRoutes);
-// app.use(searchRoutes);
 
 
 app.all("*", (req, res) => {

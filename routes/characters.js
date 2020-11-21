@@ -3,9 +3,9 @@ const router = express.Router();
 const axios = require("axios");
 const md5 = require("md5");
 const uid2 = require("uid2");
-
-const apiKey = "c7e953916c6466cbe0fee89255d30634";
-const privateKey = "0d0ae33d622870b924f990ddd4e07fff931248b1"
+require('dotenv').config();
+const apiKey = process.env.MARVEL_PUBLIC_API_KEY;
+const privateKey = process.env.MARVEL_SECRET_API_KEY
 
 router.get('/characters', async (req, res) => {
     try {
@@ -58,7 +58,7 @@ router.get("/character/:id/comics", async (req, res) => {
 })
 router.get("/comics", async (req, res) => {
     try {
-        const { offset, name } = req.query;
+        const { name } = req.query;
         const title = name === undefined ? '' : "&titleStartsWith=" + name;
         // console.log('title', title);
         const limit = 24;
