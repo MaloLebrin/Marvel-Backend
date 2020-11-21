@@ -67,8 +67,9 @@ router.post("/user/login", async (req, res) => {
 
 router.post('/user/addFav', isAuthenticated, async (req, res) => {
     try {
+        const { idMarvel, title, category, image, description } = req.fields;
+        console.log(req.fields);
         if (req.headers.authorization) {
-            const { idMarvel, title, category } = req.query;
             const Fav = await Favs.exists({ idMarvel: idMarvel })
             if (!Fav) {
                 const token = await req.headers.authorization.replace("Bearer ", "");
@@ -78,20 +79,22 @@ router.post('/user/addFav', isAuthenticated, async (req, res) => {
                         idMarvel,
                         title,
                         category,
+                        image: req.fields.image,
+                        description,
                         date: new Date(),
                         user: req.user._id
                     })
                     user.favs.push(newFav._id)
                     await user.save();
                     await newFav.save();
-                    return res.status(200).json({ message: 'Fav successfully saved' })
+                    return res.status(200).json({ message: 'Fav successfully saved', saved: true, deleted: false })
                 } else {
                     return res.status(400).json('user not found')
                 }
             } else if (Fav) {
                 try {
                     const fav = await Favs.findOneAndDelete({ idMarvel: idMarvel, user: req.user._id })
-                    return res.status(200).json({ message: 'Fav deleted successfully' })
+                    return res.status(200).json({ message: 'Fav deleted successfully ', saved: false, deleted: true })
                 } catch (error) {
                     return res.status(400).json({ error: error.message });
                 }

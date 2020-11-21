@@ -9,14 +9,15 @@ const privateKey = "0d0ae33d622870b924f990ddd4e07fff931248b1"
 
 router.get('/characters', async (req, res) => {
     try {
-        const { offset, limit } = req.query
+        const { offset, limit, name } = req.query
+        // console.log(req.query);
+        const title = name === undefined ? '' : "&nameStartsWith=" + name;
+        // console.log(title);
         const ts = uid2(8);
         const hash = md5(ts + privateKey + apiKey)
-        console.log('avant la requetet');
         const response = await axios.get(
-            `http://gateway.marvel.com/v1/public/characters?limit=${limit}&ts=${ts}&apikey=${apiKey}&hash=${hash}`
+            `http://gateway.marvel.com/v1/public/characters?orderBy=name${title}&limit=${limit}&ts=${ts}&apikey=${apiKey}&hash=${hash}`
         );
-        console.log('après la requete');
         return res.json(response.data);
     } catch (error) {
         return res.status(400).json(error.message);
@@ -42,20 +43,14 @@ router.get("/character/:id", async (req, res) => {
 router.get("/character/:id/comics", async (req, res) => {
     try {
         const id = req.params.id;
-        // const id = 1011334;
-        console.log(id);
         const date = new Date();
         const ts = Math.floor(date.getTime() / 1000);
-        console.log(ts)
         const hash = md5(ts + privateKey + apiKey)
-        console.log(hash);
-        console.log('avant la requetet')
 
         const response = await axios.get(
             `http://gateway.marvel.com/v1/public/characters/${id}/comics?ts=${ts}&apikey=${apiKey}&hash=${hash}`
         );
 
-        console.log('après la requete');
         return res.json(response.data);
     } catch (error) {
         return res.status(403).json(error.message);
@@ -63,15 +58,15 @@ router.get("/character/:id/comics", async (req, res) => {
 })
 router.get("/comics", async (req, res) => {
     try {
-        const { offset } = req.query
-        const limit = 100;
+        const { offset, name } = req.query;
+        const title = name === undefined ? '' : "&titleStartsWith=" + name;
+        // console.log('title', title);
+        const limit = 24;
         const ts = uid2(8);
         const hash = md5(ts + privateKey + apiKey)
-        console.log('avant la requetet')
         const response = await axios.get(
-            `http://gateway.marvel.com/v1/public/comics?offset=${offset}&limit=${limit}&ts=${ts}&apikey=${apiKey}&hash=${hash}`
+            `http://gateway.marvel.com/v1/public/comics?${title}&limit=${limit}&ts=${ts}&apikey=${apiKey}&hash=${hash}`
         );
-        console.log('après la requete');
         return res.json(response.data);
     } catch (error) {
         console.log("comics error", error.message);
